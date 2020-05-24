@@ -1,0 +1,2 @@
+# blog-notes
+Self blog
