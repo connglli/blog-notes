@@ -1,8 +1,8 @@
-# Blog Notes
+# Blog Notes ✍️
 
-This is a notes collection of my own 
+> 🚜 WIP, I'm migrating them from otherelse to here...
 
-(🚜 WIP, I'm migrating them from otherelse to here...).
+This is a notes collection of my own (goto [Issues](https://github.com/clixyz/blog-notes/issues))
 
 ### 🏡 Topics
 
@@ -15,9 +15,10 @@ Topics are various, but,
 ### 🚦Attention
 
 You'd bettern know before reading them,
-+ Some of them are accomplished, but some of are not (taggeg with `todo`)
++ Some of them are accomplished, but some of are not (tagged with `todo`)
 + Some of them are my personal thoughts, but some of them are learned or borrowed directly from others (but I've put references)
++ Take your own risk
 
 ### 🤝 Welcome
 
-Last but not least, I'm learning as you are. So discussions are very much welcome. Let me know if you have any comments, questions, or even **corrections**. Please directly make comments under the issues that you are interested.
+Last but not least, I'm learning as you are. So discussions are very much welcome. Let me know if you have any comments, suggestions, questions, or even **corrections**. Please directly make comments under the issues that you are interested.
