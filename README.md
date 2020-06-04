@@ -15,7 +15,7 @@ Topics are various, but,
 ### 🚦Attention
 
 You'd bettern know before reading them,
-+ Some of them are accomplished, but some of are not (tagged with `todo`)
++ Some of them are accomplished, but some of are not (they are tagged with `todo`; for these, I either know little about them, or not well prepared to write them down in a logical and structural manner)
 + Some of them are my personal thoughts, but some of them are learned or borrowed directly from others (but I've put references)
 + Take your own risk
 
