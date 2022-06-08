@@ -1,8 +1,6 @@
-# Blog Notes ✍️
+# Notes ✍️
 
-> 🚜 WIP, I'm migrating them from otherelse to here...
-
-This is a notes collection of my own (goto [Issues](https://github.com/clixyz/blog-notes/issues))
+This is a collection of my own notes ✍️ (goto [Issues](https://github.com/clixyz/blog-notes/issues)). Opinions are also my own 😆.
 
 ### 🏡 Topics
 
