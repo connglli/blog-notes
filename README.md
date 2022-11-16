@@ -1,13 +1,13 @@
 # Notes ✍️
 
-This is a collection of my own notes ✍️ (goto [Issues](https://github.com/clixyz/blog-notes/issues)). Opinions are also my own 😆.
+This is a collection of my own notes ✍️ (goto [Issues](https://github.com/clixyz/blog-notes/issues)). Opinions are also my own 😆. Or, check out to [my website](https://connglli.github.io).
 
 ### 🏡 Topics
 
 Topics are various, but,
-+ `android` and `aosp` (mostly), 
-+ `browsers` and `web` (many), 
-+ `programming languages` and `virtual machines` (some),
++ `programming languages` and `virtual machines`,
++ `android` and `aosp`, 
++ `browsers` and `web`, 
 + and other micellaneous ones (few).
 
 ### 🚦Attention
