@@ -8,7 +8,7 @@ Topics are various, but,
 + `programming languages` and `virtual machines`,
 + `android` and `aosp`, 
 + `browsers` and `web`, 
-+ and other micellaneous ones (few).
++ and other micellaneous ones.
 
 ### 🚦Attention
 
