@@ -2,14 +2,11 @@
 
 **Summary by:** DeepSeek V4.1 Flash and GPT 6 Astra
 
-**Author:**
-
-* Juneyoung Lee, Dongjoo Kim, Chung-Kil Hur (Seoul National University)
-* Nuno P. Lopes (Microsoft Research)<br/>
+**Author:** Juneyoung Lee, Dongjoo Kim, Chung-Kil Hur (Seoul National University); Nuno P. Lopes (Microsoft Research)
 
 **Source:** CAV 2021
 
-**Link:** https://doi.org/10.1007/978-3-030-81688-9_35<br/>
+**Link:** https://doi.org/10.1007/978-3-030-81688-9_35
 
 **Code:** [Alive2](https://github.com/AliveToolkit/alive2)
 

@@ -2,13 +2,11 @@
 
 **Summary by:** DeepSeek V4.1 Flash and GPT 6 Astra
 
-**Author:**
-
-* Rahul Sharma, Eric Schkufza, Berkeley Churchill, Alex Aiken (Stanford University)<br/>
+**Author:** Rahul Sharma, Eric Schkufza, Berkeley Churchill, Alex Aiken (Stanford University)
 
 **Source:** OOPSLA 2013 (pages 391-406)
 
-**Link:** https://doi.org/10.1145/2509136.2509509<br/>
+**Link:** https://doi.org/10.1145/2509136.2509509
 
 ## Key insight
 

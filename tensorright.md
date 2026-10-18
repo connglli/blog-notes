@@ -2,17 +2,11 @@
 
 **Summary by:** DeepSeek V4.1 Flash and GPT 6 Astra
 
-**Author:**
-
-* Jai Arora, Devansh Jain, Tianfan Xu, Charith Mendis (University of Illinois Urbana-Champaign)
-* Sirui Lu (University of Washington)
-* Farzin Houshmand, Praveen Narayanan, Karthik Srinivasa Murthy, Amit Sabne (Google)
-* Phitchaya Mangpo Phothilimthana, Rastislav Bodik (Google DeepMind)
-* Mohsen Lesani (University of California, Santa Cruz)<br/>
+**Author:** Jai Arora, Devansh Jain, Tianfan Xu, Charith Mendis (University of Illinois Urbana-Champaign); Sirui Lu (University of Washington); Farzin Houshmand, Praveen Narayanan, Karthik Srinivasa Murthy, Amit Sabne (Google); Phitchaya Mangpo Phothilimthana, Rastislav Bodik (Google DeepMind); Mohsen Lesani (University of California, Santa Cruz)
 
 **Source:** POPL 2025 (distinguished paper)
 
-**Link:** https://doi.org/10.1145/3704865<br/>
+**Link:** https://doi.org/10.1145/3704865
 
 **Code:** [TensorRight](https://github.com/ADAPT-uiuc/TensorRight); artifact at https://doi.org/10.5281/zenodo.14159871
 

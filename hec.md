@@ -2,14 +2,11 @@
 
 **Summary by:** DeepSeek V4.1 Flash and GPT 6 Astra
 
-**Author:**
-
-* Jiaqi Yin, Zhan Song, Cunxi Yu (University of Maryland, College Park)
-* Nicolas Bohm Agostini, Antonino Tumeo (Pacific Northwest National Laboratory)<br/>
+**Author:** Jiaqi Yin, Zhan Song, Cunxi Yu (University of Maryland, College Park); Nicolas Bohm Agostini, Antonino Tumeo (Pacific Northwest National Laboratory)
 
 **Source:** USENIX ATC 2025 (pages 1181-1196)
 
-**Link:** https://www.usenix.org/conference/atc25/presentation/yin<br/>
+**Link:** https://www.usenix.org/conference/atc25/presentation/yin
 
 ## Key insight
 

@@ -2,13 +2,11 @@
 
 **Summary by:** DeepSeek V4.1 Flash and GPT 6 Astra
 
-**Author:**
-
-* Amir Pnueli, Michael Siegel, Eli Singerman (Weizmann Institute of Science)<br/>
+**Author:** Amir Pnueli, Michael Siegel, Eli Singerman (Weizmann Institute of Science)
 
 **Source:** TACAS 1998 (LNCS 1384, pages 151-166)
 
-**Link:** https://doi.org/10.1007/BFb0054170<br/>
+**Link:** https://doi.org/10.1007/BFb0054170
 
 ## Key insight
 

@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+summary_repo_root=$(git rev-parse --show-toplevel)
+exec python3 "$summary_repo_root/scripts/check_summaries.py"

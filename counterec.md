@@ -2,13 +2,11 @@
 
 **Summary by:** DeepSeek V4.1 Flash and GPT 6 Astra
 
-**Author:**
-
-* Shubhani Gupta, Abhishek Rose, Sorav Bansal (Indian Institute of Technology Delhi)<br/>
+**Author:** Shubhani Gupta, Abhishek Rose, Sorav Bansal (Indian Institute of Technology Delhi)
 
 **Source:** OOPSLA 2020 (Proc. ACM Program. Lang. 4, Article 221)
 
-**Link:** https://doi.org/10.1145/3428289<br/>
+**Link:** https://doi.org/10.1145/3428289
 
 **Demo:** online equivalence checker at http://compiler.ai/
 

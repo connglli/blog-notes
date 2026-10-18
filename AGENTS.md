@@ -4,6 +4,8 @@
 
 This directory holds short, self-contained summaries of papers and blog posts. One markdown file per work, named after the work.
 
+Use `TEMPLATE.md` for every summary. It defines the required metadata and section order; the rules below define the content and quality requirements. `paper.md` is a reading list, not a single-work summary.
+
 ## Before writing
 
 Think critically and carefully before writing anything down. Completeness is not the goal: leaving out a less important, trivial, or simple part is fine. Soundness is the goal: do not write anything wrong. Check every claim against the source instead of relying on memory, and prefer the source's own definitions and its running example.
@@ -50,6 +52,9 @@ Write plain English in plain words. Specialized domain terms are allowed and oft
 - Em and en dashes disallowed; commas and parentheses do the same work.
 - Code blocks carry real code from the work or from a rough implementation, and have to be true.
 - Emphasis marks the clause that matters. Bold and caps everywhere mean nothing stands out.
+- Put one bare publisher or official publication landing-page URL in `**Link:**`. Prefer the publisher page or DOI; for preprints without a publisher page, use the archive landing page, and for blog posts use the original post. Do not wrap this URL in a Markdown link or add alternate paper URLs.
+- Do not link directly to PDFs anywhere in Markdown. Remove author-PDF and other PDF links rather than moving them to another field. Code, documentation, demo, data, and artifact links may use descriptive Markdown labels.
+- Keep each metadata field on one physical line, separated by blank lines. Use `**[1] Concept.** Explanation` for concept entries.
 
 ## Summary attribution
 
@@ -60,6 +65,12 @@ Every paper or blog summary has a `**Summary by:**` line immediately after the l
 * When editing a summary, preserve existing credits and their order, and append the editor's name if it is not already listed. List each contributor only once.
 
 This rule applies to summaries, not repository instructions or the README. The summary attribution does not replace the original work's author information.
+
+## Format checks
+
+Run `python3 scripts/check_summaries.py` to check only Markdown files added, modified, copied, or renamed in the staged changes. `--staged` is true by default. The checker reads their index contents and the index version of `TEMPLATE.md`; unchanged files, staged deletions, unstaged changes, and untracked drafts are excluded. Stage the template when introducing or changing the format. Use `--no-staged` only when explicitly requesting a working-tree check, including untracked drafts. These checks validate structure, metadata, links, and concept references; they do not establish technical accuracy or replace the source review and slop checklist.
+
+Enable the repository's pre-commit hook with `git config --local core.hooksPath .githooks`. The hook runs the staged check, so unstaged fixes cannot hide invalid staged content. Run checker regression tests with `python3 -m unittest discover -s scripts -p 'test_*.py'`.
 
 ## The slop checklist
 

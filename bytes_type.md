@@ -2,14 +2,11 @@
 
 **Summary by:** DeepSeek V4.1 Flash and GPT 6 Astra
 
-**Author:**
-
-* Pedro Lobo (INESC-ID / Instituto Superior Técnico, University of Lisbon)
-* John McIver (Virginia Tech), George Mitenkov (Aptos Labs), Juneyoung Lee (AWS), Kirshanthan Sundararajah (Virginia Tech), Nuno P. Lopes (INESC-ID / Instituto Superior Técnico, University of Lisbon)<br/>
+**Author:** Pedro Lobo (INESC-ID / Instituto Superior Técnico, University of Lisbon); John McIver (Virginia Tech), George Mitenkov (Aptos Labs), Juneyoung Lee (AWS), Kirshanthan Sundararajah (Virginia Tech), Nuno P. Lopes (INESC-ID / Instituto Superior Técnico, University of Lisbon)
 
 **Source:** PLDI 2026 (Distinguished Paper Award)
 
-**Link:** https://doi.org/10.1145/3808250<br/>
+**Link:** https://doi.org/10.1145/3808250
 
 **Code:** [LLVM prototype](https://github.com/pedroclobo/llvm-project/tree/byte-type) and [Clang tests](https://github.com/jmciver/llvm-project/tree/users/jmciver/u2p-paper-clang-tests)
 

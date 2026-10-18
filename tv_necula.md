@@ -2,13 +2,11 @@
 
 **Summary by:** DeepSeek V4.1 Flash and GPT 6 Astra
 
-**Author:**
-
-* George C. Necula (University of California, Berkeley)<br/>
+**Author:** George C. Necula (University of California, Berkeley)
 
 **Source:** PLDI 2000 (pages 83-94)
 
-**Link:** https://doi.org/10.1145/349299.349314 ([Author PDF](https://people.eecs.berkeley.edu/~necula/Papers/tv_pldi00.pdf))<br/>
+**Link:** https://doi.org/10.1145/349299.349314
 
 ## Key insight
 

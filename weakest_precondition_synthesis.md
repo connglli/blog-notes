@@ -2,13 +2,11 @@
 
 **Summary by:** DeepSeek V4.1 Flash and GPT 6 Astra
 
-**Author:**
-
-* Nuno P. Lopes, José Monteiro (INESC-ID, IST Universidade de Lisboa)<br/>
+**Author:** Nuno P. Lopes, José Monteiro (INESC-ID, IST Universidade de Lisboa)
 
 **Source:** VMCAI 2014
 
-**Link:** https://doi.org/10.1007/978-3-642-54013-4_12<br/>
+**Link:** https://doi.org/10.1007/978-3-642-54013-4_12
 
 **Code:** [PSyCO prototype and benchmarks](http://web.ist.utl.pt/nuno.lopes/psyco/)
 

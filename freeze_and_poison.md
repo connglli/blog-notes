@@ -2,14 +2,11 @@
 
 **Summary by:** DeepSeek V4.1 Flash and GPT 6 Astra
 
-**Author:**
-
-* Juneyoung Lee, Yoonseung Kim, Youngju Song, Chung-Kil Hur (Seoul National University)
-* Sanjoy Das (Azul Systems), David Majnemer (Google), John Regehr (University of Utah), Nuno P. Lopes (Microsoft Research)<br/>
+**Author:** Juneyoung Lee, Yoonseung Kim, Youngju Song, Chung-Kil Hur (Seoul National University); Sanjoy Das (Azul Systems), David Majnemer (Google), John Regehr (University of Utah), Nuno P. Lopes (Microsoft Research)
 
 **Source:** PLDI 2017
 
-**Link:** https://doi.org/10.1145/3062341.3062343<br/>
+**Link:** https://doi.org/10.1145/3062341.3062343
 
 **Code:** [LLVM fork](https://github.com/snu-sf/llvm-freeze/tree/pldi) and [Clang fork](https://github.com/snu-sf/clang-freeze/tree/pldi)
 

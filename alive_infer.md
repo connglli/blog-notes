@@ -2,13 +2,11 @@
 
 **Summary by:** DeepSeek V4.1 Flash and GPT 6 Astra
 
-**Author:**
-
-* David Menendez, Santosh Nagarakatte (Rutgers University)<br/>
+**Author:** David Menendez, Santosh Nagarakatte (Rutgers University)
 
 **Source:** PLDI 2017
 
-**Link:** https://doi.org/10.1145/3062341.3062372<br/>
+**Link:** https://doi.org/10.1145/3062341.3062372
 
 **Code:** [Alive-NJ](https://github.com/rutgers-apl/alive-nj) (the prototype extends Alive-NJ and is also called PInfer in parts of the paper)
 

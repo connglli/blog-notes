@@ -2,13 +2,11 @@
 
 **Summary by:** DeepSeek V4.1 Flash and GPT 6 Astra
 
-**Author:**
-
-* Philip Zucker<br/>
+**Author:** Philip Zucker
 
 **Source:** blog "Hey There Buddo!" 2026-10-04
 
-**Link:** https://www.philipzucker.com/refinement_egraph/<br/>
+**Link:** https://www.philipzucker.com/refinement_egraph/
 
 **Code and demo:** prototype [refinement-microegg](https://github.com/philzook58/refinement-microegg), based on Max Willsey's [microegg](https://github.com/mwillsey/microegg); WASM demo at https://www.philipzucker.com/refinement-microegg
 

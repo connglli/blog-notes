@@ -14,12 +14,21 @@ This repo is now assisted by agents. I collect papers, blogs, projects, etc. tha
 + an illustrative example,
 + and the concepts and terms needed to follow it.
 
-The format the agents write against lives in `AGENTS.md`.
+Start each summary from [TEMPLATE.md](TEMPLATE.md); the writing and source-review rules live in [AGENTS.md](AGENTS.md). Keep one bare publication URL and no direct PDF links. Code, documentation, and artifact links may use descriptive labels.
+
+Enable the pre-commit format check once per clone (Python 3.10+ and Git are required):
+
+```sh
+git config --local core.hooksPath .githooks
+```
+
+The hook and `python3 scripts/check_summaries.py` check only staged changes by default, using file contents and `TEMPLATE.md` from the index. Unchanged files, deletions, unstaged changes, and untracked drafts are excluded. An explicit `--no-staged` checks the working tree, including untracked drafts. To run the checker tests, use `python3 -m unittest discover -s scripts -p 'test_*.py'`. Technical accuracy still requires checking the original source. Repository documentation and the reading list in `paper.md` are exempt from the summary template.
 
 ### 🏡 Topics
 
 Topics are various:
-+ `programming languages`, `compilers`, and `virtual machines`,
++ `compilers` and `virtual machines`,
++ `software/systems verification` and programming languages
 + `ai agents`, `reasoning`, and language models,
 + `android` and `aosp`,
 + `browsers` and `web`,

@@ -2,14 +2,11 @@
 
 **Summary by:** DeepSeek V4.1 Flash and GPT 6 Astra
 
-**Author:**
-
-* Berkeley Churchill, Oded Padon, Alex Aiken (Stanford University)
-* Rahul Sharma (Microsoft Research India)<br/>
+**Author:** Berkeley Churchill, Oded Padon, Alex Aiken (Stanford University); Rahul Sharma (Microsoft Research India)
 
 **Source:** PLDI 2019 (pages 1027-1040)
 
-**Link:** https://doi.org/10.1145/3314221.3314596<br/>
+**Link:** https://doi.org/10.1145/3314221.3314596
 
 **Code:** [pldi19-equivalence-checker](https://github.com/bchurchill/pldi19-equivalence-checker); release at https://doi.org/10.5281/zenodo.2646657
 

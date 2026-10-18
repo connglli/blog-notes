@@ -2,17 +2,11 @@
 
 **Summary by:** DeepSeek V4.1 Flash and GPT 6 Astra
 
-**Author:**
-
-* Benjamin Driscoll, Anjiang Wei, Alex Aiken (Stanford University)
-* Kshitij Dubey, Neeraj Kayal (Microsoft Research India)
-* Rahul Sharma (Google DeepMind; work done at Microsoft Research)<br/>
+**Author:** Benjamin Driscoll, Anjiang Wei, Alex Aiken (Stanford University); Kshitij Dubey, Neeraj Kayal (Microsoft Research India); Rahul Sharma (Google DeepMind; work done at Microsoft Research)
 
 **Source:** OOPSLA 2026
 
-**Link:** https://doi.org/10.1145/3839470<br/>
-
-**arXiv:** https://arxiv.org/abs/2511.12638<br/>
+**Link:** https://doi.org/10.1145/3839470
 
 **Code and data:** [Volta](https://github.com/willtunnels/volta); benchmarks and Agda proof at https://doi.org/10.5281/zenodo.21529230; implementation snapshot at https://doi.org/10.5281/zenodo.21945204
 
