@@ -12,7 +12,7 @@ Think critically and carefully before writing anything down. Completeness is not
 
 Every summary contains, in order:
 
-- The title as a level-1 heading, followed by the author, the link to the work, and links to its code or demos when the work names them.
+- The title as a level-1 heading, followed by the summary attribution, the original work's author, the link to the work, and links to its code or demos when the work names them.
 - `## Key insight`: one or two sentences with the central idea. A short quote from the work works well here.
 - `## Basic idea`: the core idea in plain language, including the minimum background needed to follow it.
 - `## Illustrative example`: one concrete example, written from scratch rather than copied from the work. Rebuild the work's running example smaller and more self-contained when possible, with our own names and only the details the basic idea needs. Every concept that the basic idea introduces and that a reader may not already know must show up in the example, so that a reader can follow the example without reading the work.
@@ -50,6 +50,16 @@ Write plain English in plain words. Specialized domain terms are allowed and oft
 - Em and en dashes disallowed; commas and parentheses do the same work.
 - Code blocks carry real code from the work or from a rough implementation, and have to be true.
 - Emphasis marks the clause that matters. Bold and caps everywhere mean nothing stands out.
+
+## Summary attribution
+
+Every paper or blog summary has a `**Summary by:**` line immediately after the level-1 title and before `**Author:**`, with blank lines separating these elements. Use a header attribution, not a footnote:
+
+* Credit the actual people or models who summarized or edited the document, using their names. Do not hard-code model names or assume a default contributor.
+* List the original summarizer or summarizers first, followed by editors in the order of their first contribution.
+* When editing a summary, preserve existing credits and their order, and append the editor's name if it is not already listed. List each contributor only once.
+
+This rule applies to summaries, not repository instructions or the README. The summary attribution does not replace the original work's author information.
 
 ## The slop checklist
 

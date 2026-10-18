@@ -1,8 +1,11 @@
 # Taming Undefined Behavior in LLVM
 
+**Summary by:** DeepSeek V4.1 Flash and GPT 6 Astra
+
 **Author:**
-- Juneyoung Lee, Yoonseung Kim, Youngju Song, Chung-Kil Hur (Seoul National University)
-- Sanjoy Das (Azul Systems), David Majnemer (Google), John Regehr (University of Utah), Nuno P. Lopes (Microsoft Research)<br/>
+
+* Juneyoung Lee, Yoonseung Kim, Youngju Song, Chung-Kil Hur (Seoul National University)
+* Sanjoy Das (Azul Systems), David Majnemer (Google), John Regehr (University of Utah), Nuno P. Lopes (Microsoft Research)<br/>
 
 **Source:** PLDI 2017
 
@@ -35,7 +38,7 @@ Without `nsw`, `add` wraps on overflow and the replacement would be wrong on any
 
 **Why `poison` is enough.** Poison is not a value of the type: it taints the comparison, so whenever the comparison becomes a branch condition, the original program executes UB [1] on the overflow input. A transformation may give any behavior to an execution in which the original has UB [9], so replacing the comparison with `b > 0` is allowed. On executions without overflow, the two expressions agree.
 
-**Freezing a value.** If the program uses `%sum` directly, its poison would trigger UB. The `freeze` instruction [5] turns poison into an arbitrary but fixed value and leaves defined values unchanged:
+**Freezing a value.** Using `%sum` in further arithmetic propagates poison; using a poison comparison as a branch condition triggers immediate UB. The `freeze` instruction [5] turns poison into an arbitrary but fixed value and leaves defined values unchanged:
 
 ```
 %sum = add nsw i32 %a, %b
@@ -48,20 +51,20 @@ All uses of `%f` see the same value, while two different freeze instructions may
 
 **[1] Undefined behavior (UB).** Behavior that the C/C++ standards or the IR leave unconstrained. Optimizers use UB by assuming it does not happen; for example, signed overflow is UB in C, so `a + b > a` may be replaced by `b > 0`. UB is untrapped, so its effects can appear far from the operation that caused it.
 
-**[2] Immediate and deferred UB.** LLVM's two classes of undefined behavior. Immediate UB has immediate effects, such as a processor trap or memory corruption, and cannot be executed speculatively; division by zero and invalid pointer dereferences are examples. Deferred UB is safe to execute speculatively but yields an unreliable value; signed overflow and shifts past the bit width are examples. Under the paper's proposal, branching on poison is immediate UB.
+**[2] Immediate and deferred UB.** LLVM's two classes of undefined behavior. Immediate UB leaves the whole execution unconstrained, without requiring a trap, and cannot safely be introduced on a previously defined path by speculation; division by zero and invalid pointer dereferences are examples. Deferred UB is safe to execute speculatively but yields an unreliable value; signed overflow and shifts past the bit width are examples. Under the paper's proposal, branching on poison is immediate UB.
 
 **[3] undef and poison.** The two IR values that represent deferred UB [2]. `undef` is a value of the given type that may differ at each use. `poison` is not a value of the type: most operations return poison if any operand is poison, and under the proposal branching on it is immediate UB [2]. The paper removes `undef` and keeps `poison`, with `phi` and `select` [6] propagating poison only from the value they choose.
 
 **[4] nsw and nuw.** Attributes on LLVM arithmetic instructions meaning "no signed wrap" and "no unsigned wrap": if the operation overflows, the result is poison [3] instead of a wrapped value. They let the compiler assume that overflow does not happen without paying for a trap.
 
-**[5] freeze.** An instruction that returns its operand unchanged when it is a defined value, and an arbitrary but fixed value of the type when the operand is poison [3]. All uses of one freeze see the same value, but two freeze instructions over the same poison may choose differently, so duplicating or sinking a freeze is not allowed. Freeze is how a program removes poison without triggering UB.
+**[5] freeze.** An instruction that returns its operand unchanged when it is a defined value, and an arbitrary value of the type when the operand is poison [3]. All uses of the result of one dynamic execution agree. Duplicating that execution can introduce independent choices; in particular, sinking a freeze into a loop can let its result change between iterations (Section 5.5).
 
-**[6] SSA, phi, and select.** Static single assignment (SSA) form gives every register a single definition, so a control-flow join needs a `phi` instruction that takes the value from the branch that was taken. `select` is the value-level conditional. In the proposal, `phi` and `select` return poison only when the chosen value is poison, unlike arithmetic operations, which return poison when any operand is poison.
+**[6] SSA, phi, and select.** Static single assignment (SSA) form gives every register a single definition. A `phi` instruction selects the value associated with the predecessor block that executed. A `select` chooses one of two values using a Boolean condition: poison in the unchosen value does not propagate, but a poison condition produces poison (Figure 5).
 
-**[7] GVN (global value numbering).** An optimization that finds expressions computing the same value and replaces redundant uses with a representative, for example replacing `w = x + 1` with `y` inside a block guarded by `t == y`. This substitution is only sound if a poison value cannot leak into a place where a defined value was expected, which the branch-on-poison rule provides.
+**[7] GVN (global value numbering).** An optimization that replaces equal expressions with a shared representative. For example, a branch on `x == y` can justify substituting `y` for `x` on its true path. Making a poison branch condition immediate UB excludes executions where that equality test would otherwise allow substitution of a poison value for a defined one.
 
 **[8] Loop unswitching.** An optimization that hoists a loop-invariant conditional out of a loop and duplicates the loop body for each outcome. The hoisted branch may execute even when the original loop never ran, so if the condition may be poison [3] the transformation has to freeze it [5]; otherwise it introduces UB on an execution that was defined.
 
-**[9] Correctness of a UB-aware transformation.** A transformation is correct when it preserves every execution in which the original program has defined behavior; executions in which the original triggers UB may be given any behavior. This is why replacing a comparison that becomes poison with a constant is allowed: the executions where the poison reaches a branch are already UB.
+**[9] Correctness of a UB-aware transformation.** Every behavior of the transformed program must be permitted by the original. A transformation may remove nondeterministic choices and make poison more defined; it must preserve concrete results on defined inputs and must not introduce immediate UB on an input where the original excludes it.
 
-**[10] Poison-aware static analysis.** LLVM analyses typically report facts that hold only when the analyzed values are not poison [3]; for example, `shl 1, y` is known to be a power of two, but if `y` is poison the result may be any value. This is safe for rewriting expressions, because the rewritten expression is poison exactly when the original is, but unsafe for moving operations past control flow: hoisting `1 / a` because `a` is known to be a power of two is unsound if `a` may be poison and the loop may never run. The paper discusses returning "up to poison" results and letting the client check non-poisonness.
+**[10] Poison-aware static analysis.** An analysis fact may hold only when the value is not poison: `shl 1, y` is a power of two whenever its result is defined. Such a fact does not prove that the value is safe as a divisor. Hoisting `1 / a` out of a loop that may execute zero times can introduce immediate UB if `a` is poison. The client must establish non-poisonness when its use of an analysis fact requires it (Section 5.6).

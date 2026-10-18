@@ -1,8 +1,11 @@
 # Semantic Program Alignment for Equivalence Checking
 
+**Summary by:** DeepSeek V4.1 Flash and GPT 6 Astra
+
 **Author:**
-- Berkeley Churchill, Oded Padon, Alex Aiken (Stanford University)
-- Rahul Sharma (Microsoft Research India)<br/>
+
+* Berkeley Churchill, Oded Padon, Alex Aiken (Stanford University)
+* Rahul Sharma (Microsoft Research India)<br/>
 
 **Source:** PLDI 2019 (pages 1027-1040)
 
@@ -12,15 +15,15 @@
 
 ## Key insight
 
-Syntactic alignments that pair loop iteration i of one program with iteration i of the other break under vectorization, unrolling, and peeling. What is needed is "a semantically guided alignment that relates the two programs in a way that is designed to make the final proof of equivalence as simple as possible": guess a weak relation on machine states, run both programs on test inputs, pair the states that satisfy it, and lift the resulting trace alignment into a product program that SMT can check.
+Syntactic alignments that pair loop iteration i of one program with iteration i of the other break under vectorization, unrolling, and peeling. SPA guesses a weak relation on machine states, runs both programs on test inputs, pairs the states that satisfy it, and lifts the resulting trace alignment into a product program that SMT can check.
 
 ## Basic idea
 
-Product-program equivalence checking needs an alignment that pairs the transitions of one program with transitions of the other, and syntax-based alignments fail when optimizations such as vectorization, unrolling, and peeling make loop iterations correspond many-to-many. SPA aligns executions instead: the user supplies test cases, SPA guesses a weak alignment predicate [2] over pairs of machine states, runs both x86-64 functions on each test, and pairs the states that satisfy the predicate to obtain a trace alignment [3]. The paired prefixes lift back to syntax as a program alignment automaton [4], whose nodes are pairs of program points and whose transitions are labeled with one path in each program; the automaton is simplified, and a held-out test set rejects automata that overfit the training traces. Each node carries an invariant learned from the observed states [5], and equivalence reduces to relational Hoare triples discharged by an SMT solver: every transition preserves the invariants, every pair of feasible paths from a node is covered by some transition (uncovered pairs must be infeasible), no cycle lets one program never advance, and the exit invariant implies equal return registers and heaps [6]. Because the alignment is built from behavior, the same automaton can pair one target iteration with several rewrite iterations or with a fragment of an iteration, which is what makes vectorized loops provable; a soundness lemma and its corollary show that automata passing all proof obligations imply equivalence for all inputs. SPA verified the hand-vectorized glibc strlen against the simple reference and 55 of 56 vectorization benchmarks derived from TSVC (the one failure was a solver timeout), including warm-up loops whose trip counts depend on pointer alignment.
+Product-program [1] equivalence checking needs an alignment that pairs the transitions of one program with transitions of the other, and syntax-based alignments fail when optimizations such as vectorization, unrolling, and peeling make loop iterations correspond many-to-many. SPA aligns executions instead: the user supplies test cases, SPA guesses a weak alignment predicate [2] over pairs of machine states, runs both x86-64 functions on each test, and pairs the states that satisfy the predicate to obtain a trace alignment [3]. The paired prefixes lift back to syntax as a program alignment automaton [4], whose nodes are pairs of program points and whose transitions are labeled with one path in each program; the automaton is simplified, and a held-out test set rejects automata that overfit the training traces. Each node carries an invariant learned from the observed states [5], and equivalence reduces to relational Hoare triples discharged by an SMT solver: every transition preserves the invariants, every pair of feasible paths from a node is covered by some transition (uncovered pairs must be infeasible), no cycle lets one program never advance, and the exit invariant implies equal return registers and heaps [6]. Because the alignment is built from behavior, the same automaton can pair one target iteration with several rewrite iterations or with a fragment of an iteration, which is what makes vectorized loops provable; a soundness lemma and its corollary show that automata passing all proof obligations imply equivalence for all inputs. SPA verified the hand-vectorized glibc strlen against the simple reference and 55 of 56 vectorization benchmarks derived from TSVC (the one failure was a solver timeout), including warm-up loops whose trip counts depend on pointer alignment.
 
 ## Illustrative example: doubling an array
 
-**The functions.** The target processes one element per iteration; the rewrite peels one element when the length is odd and then handles pairs. (In the tool these are x86-64 functions; the loop structure is what matters here.)
+**The functions.** The target processes one element per iteration; the rewrite peels one element when the length is odd and then handles pairs. Assume a nonnegative length, a valid array of 32-bit words, multiplication modulo 2^32, and no pointer wraparound. The pseudocode abbreviates the x86-64 instructions that the tool analyzes.
 
 ```text
 T:  for (i = 0; i < n; i++) a[i] *= 2;
@@ -29,9 +32,9 @@ R:  if (n % 2 == 1) { a[0] *= 2; a++; n--; }
     while (n) { a[0] *= 2; a[1] *= 2; a += 2; n -= 2; }
 ```
 
-**Traces and the alignment predicate.** With the test input n = 5 and a = [1, 2, 3, 4, 5], the target's trace visits its loop head with i = 0, 1, 2, 3, 4, 5, and the rewrite's trace, after the peel, visits its loop head with remaining lengths 4, 2, 0 and passes mid-body states after processing elements 1 and 3. The guessed alignment predicate is `base + 4i = p`, where base is the array start, i is the target's index, and p is the rewrite's pointer. It holds on the pairs (target i=0, rewrite entry), (i=1, rewrite at element 1), (i=2, rewrite mid-body after element 1), (i=3, rewrite at element 3), (i=4, rewrite mid-body after element 3), and (i=5, rewrite exit). A trace alignment [3] is the set of such prefix pairs collected over all test cases.
+**Traces and the alignment predicate.** With n = 5 and a = [1, 2, 3, 4, 5], the target visits its loop head at i = 0, 1, 2, 3, 4, 5. The rewrite reaches its pair-loop head with remaining lengths 4, 2, 0. Suppose the target keeps its current address `q = base + 4*i` in a register, while the rewrite uses pointer `p`. The alignment predicate [2] is `q = p` conjoined with heap equality. It pairs the initialized entries, then target i = 1, 3, 5 with the rewrite after the peel, after one pair, and after two pairs. It does not pair target i = 2 or 4 with a rewrite mid-body state, because the rewrite has not yet advanced its pointer. These prefix pairs form the trace alignment [3].
 
-**The automaton.** Lifting consecutive aligned pairs to syntax gives a program alignment automaton [4] with nodes (q1, q1') for the entries, (q2, q2') for the loop heads, and (q3, q3') for the exits, and three kinds of transitions:
+**The automaton.** A simplified program alignment automaton [4] for these alignments has nodes (q1, q1') for the entries, (q2, q2') for the loop heads, and (q3, q3') for the exits, and three kinds of transitions:
 
 ```text
 (q1, q1') -> (q2, q2')   ab ; a'    when n is odd   (T: init plus one iteration; R: the peel)
@@ -40,13 +43,13 @@ R:  if (n % 2 == 1) { a[0] *= 2; a++; n--; }
 (q2, q2') -> (q3, q3')   c  ; d'                    (both exit tests)
 ```
 
-where b is the target's loop body, a' the peel, b' the skip, c' the pair body, and c, d' the failing guards. Simplification deletes nodes and transitions the training traces do not need; in the paper's experiments it reduces the node count by about 3.9 times and the edge count by about 3.7 times.
+Here a initializes the target loop, b includes its successful guard and body, a' is the peel, b' the skip, c' the guarded pair body, and c, d' the failing guards. Automaton simplification splices out intermediate nodes without self-loops and removes redundant transitions while retaining acceptance of the training traces [4].
 
-**Invariants.** The observed states at (q2, q2') satisfy `p - 4i = base`, `n - i = n'`, `i <= n`, and heap equality (the elements already processed have been doubled in both arrays). The entry node gets the equality of input states, and the exit node the equality of the final heaps, which is the observable output here since both functions write only memory.
+**Invariants.** Let n be the original length and n' the rewrite's remaining length. The observed states at (q2, q2') satisfy `p = base + 4*i`, `n - i = n'`, `0 <= i <= n`, even `n'`, and heap equality (the elements already processed have been doubled in both arrays). The entry node gets the equality of input states, and the exit node the equality of the final heaps, which is the observable output here since both functions write only memory.
 
-**Checks.** The self-loop obligation [6] says: assume the invariants at (q2, q2'); the target doubles a[i] and a[i+1] and advances i by 2, while the rewrite doubles the two elements at its pointer and advances p by 2 and decreases n' by 2; all the invariants are restored. The coverage obligations say that from (q2, q2') the pair (target continues, rewrite exits) is infeasible, since n' = 0 contradicts i < n through `n - i = n'`, and symmetrically for (target exits, rewrite continues); the pairs that stay feasible are exactly those matched by the two transitions above. At the exit the invariants imply the heaps are equal, which is what the equivalence claim needs. All of these go to the SMT solver as relational Hoare triples.
+**Checks.** The self-loop obligation [6] says: assume the invariants at (q2, q2'); the target doubles a[i] and a[i+1] and advances i by 2, while the rewrite doubles the two elements at its pointer and advances p by 8 bytes and decreases n' by 2; all the invariants are restored. The coverage obligations say that from (q2, q2') the pair (target continues, rewrite exits) is infeasible, since n' = 0 contradicts i < n through `n - i = n'`, and symmetrically for (target exits, rewrite continues); the pairs that stay feasible are exactly those matched by the two transitions above. At the exit the invariants imply the heaps are equal, which is what the equivalence claim needs. All of these go to the SMT solver as relational Hoare triples.
 
-**Why the predicate matters.** If the alignment predicate were true only at the trace endpoints, every test would create a fresh start-to-exit transition covering its whole trace, which is an overfitting automaton and is rejected by the held-out tests. If the predicate were too strong, required pairs such as the target's mid-loop states with the rewrite's mid-body states would be missed and no proof would be found. SPA searches a small grammar of predicates (linear relations between a register or stack slot of each side with coefficients 1, 2, 4, 8, or 16, conjoined with heap equality) and tries them until one yields a viable automaton.
+**Why the predicate matters.** If the alignment predicate were true only at the trace endpoints, every test would create a fresh start-to-exit transition covering its whole trace, which is an overfitting automaton and is rejected by the held-out tests. If the predicate were too strong, it could miss the loop-head pairs needed for the inductive proof. SPA searches a small grammar of predicates (linear relations between a register or stack slot of each side with coefficients 1, 2, 4, 8, or 16, conjoined with heap equality) and tries them until one yields a viable automaton.
 
 ## Concepts and terms
 

@@ -1,11 +1,14 @@
 # Translation Validation for an Optimizing Compiler
 
+**Summary by:** DeepSeek V4.1 Flash and GPT 6 Astra
+
 **Author:**
-- George C. Necula (University of California, Berkeley)<br/>
 
-**Source:** PLDI 2000 (pages 83-95)
+* George C. Necula (University of California, Berkeley)<br/>
 
-**Link:** https://doi.org/10.1145/349299.349314<br/>
+**Source:** PLDI 2000 (pages 83-94)
+
+**Link:** https://doi.org/10.1145/349299.349314 ([Author PDF](https://people.eecs.berkeley.edu/~necula/Papers/tv_pldi00.pdf))<br/>
 
 ## Key insight
 
@@ -13,11 +16,11 @@ An optimizing compiler can be checked one run at a time instead of being proved 
 
 ## Basic idea
 
-Proving that an optimizing compiler always produces correct code is out of reach, but GCC can be told to dump its RTL intermediate representation after every pass, so a validator can compare the program before and after each transformation without modifying the compiler [1]. The correctness contract is observable equivalence: two executions are equivalent when they perform the same sequence of function calls and returns, with equal memory states, arguments, and return values, and spill slots are renamed to fresh temporaries first so that register-allocation traffic is invisible [2]. *The witness of equivalence is a simulation relation [3]: a set of triples (a source program point, a target program point, equalities between their live temporaries) such that executions started at related points in states satisfying the equalities are equivalent; the checker follows both programs in parallel, symbolically evaluating each basic block into a transfer function [4] and simplifying the collected expression, memory, and state constraints with arithmetic, memory, and aliasing rules that mirror the compiler's own rules [5].* Since GCC is not modified, the relation is inferred instead of supplied: a Scan component walks the two control-flow graphs in parallel, a Branch component decides by heuristic similarity scores whether each source branch was eliminated, kept, or reversed in the target, and a Solve component eliminates the generated constraints, with any leftover constraint reported as a possible compilation error, that is, as a false alarm when no real error exists [6]. The prototype (OCaml, 10,500 lines) validated the compilation of GCC 2.91 and the Linux kernel across GCC's passes with low false-alarm rates, at about four times the cost of compilation, and isolated a known GCC 2.7.2.2 bug in the register allocator [7]. Its limits: the branch heuristics do not handle loop unrolling, only equality constraints are inferred, reasoning stops at function calls, and most maintenance effort goes into keeping the algebraic and aliasing simplifiers as strong as the compiler's own reasoning [8].
+GCC can be told to dump its RTL intermediate representation after every pass, so a validator can compare the program before and after each transformation without modifying the compiler [1]. The correctness contract is observable equivalence: two executions are equivalent when they perform the same sequence of function calls and returns, with equal memory states, arguments, and return values, and spill slots are renamed to fresh temporaries first so that register-allocation traffic is invisible [2]. The witness of equivalence is a simulation relation [3]: a set of triples (a source program point, a target program point, equalities between their live temporaries) such that executions started at related points in states satisfying the equalities are equivalent; the checker follows both programs in parallel, symbolically evaluating each basic block into a transfer function [4] and simplifying the collected expression, memory, and state constraints with arithmetic, memory, and aliasing rules that mirror the compiler's own rules [5]. Since GCC is not modified, the relation is inferred instead of supplied: a Scan component walks the two control-flow graphs in parallel, a Branch component decides by heuristic similarity scores whether each source branch was eliminated, kept, or reversed in the target, and a Solve component eliminates the generated constraints, with any leftover constraint reported as a possible compilation error, that is, as a false alarm when no real error exists [6]. The prototype (OCaml, 10,500 lines) validated the compilation of GCC 2.91 and the Linux kernel across GCC's passes with low false-alarm rates, at about four times the cost of compilation, and isolated a known GCC 2.7.2.2 bug in the register allocator [7]. Its limits: the branch heuristics do not handle loop unrolling, only equality constraints are inferred, reasoning stops at function calls, and most maintenance effort goes into keeping the algebraic and aliasing simplifiers as strong as the compiler's own reasoning [8].
 
 ## Illustrative example: strength reduction on a loop
 
-**The loop pair.** The source writes `u*i` into `a[i]` for `i` in `0..n-1`, where `u` is the global `c`, and returns `i`. In IL notation (with `[&x]` a memory read and an assignment to `[E]` a memory write):
+**The loop pair.** The source writes `u*i` into `a[i]` for `i` in `0..n-1`, where `u` is the global `c`, and returns `i`. Assume valid array accesses, disjoint storage for `a`, `c`, and `n`, and exact integer arithmetic for this example. Addresses below count array cells rather than bytes. In IL notation (with `[&x]` a memory read and an assignment to `[E]` a memory write):
 
 ```text
 source                                   target
@@ -38,18 +41,19 @@ The target is what GCC-like transformations produce here: the loop is inverted (
 
 ```text
 1. (S0, T0):  (no constraints)
-2. (S1, T1):  i = r0,  [&c]*i = r1,  [&c] = r2
+2. (S2, T1):  i = r0,  [&c]*i = r1,  [&c] = r2
 3. (S3, T2):  i = r0
 ```
 
 **Checking the entry.** Element 1 holds at start. The target's duplicated test at T0 corresponds to the source's test at S1 (both branch on `index < [&n]`); when the loop is entered, `i = r0 = 0`, `[&c]*0 = 0 = r1`, and `[&c] = r2` establish element 2, and when it is skipped, `i = r0 = 0` establishes element 3, whose equal returns follow from equal memory states.
 
-**Checking the loop.** Assume element 2 at (S1, T1) and take the continue branch on both sides. The source reads `[&c]`, writes `[&c]*i` to `&a + i`, and increments `i`; the target writes `r1` to `&a + r0`, increments `r0`, and adds `r2` to `r1`. To re-establish element 2:
+**Checking the loop.** Assume element 2 at the two body entries (S2, T1). The source reads `[&c]`, writes `[&c]*i` to `&a + i`, and increments `i`; the target writes `r1` to `&a + r0`, increments `r0`, and adds `r2` to `r1`. After the bodies, the equalities needed by element 2 hold again:
+
 * `i + 1 = r0 + 1` follows from `i = r0`;
-* the write cannot change `[&c]`, because `&a + i` and `&c` are addresses of two different globals (the same aliasing assumption GCC itself makes), so `[&c] = r2` is preserved and the source's read still yields the old value;
+* the write cannot change `[&c]`, because valid accesses to `a` do not alias `c`, so `[&c] = r2` is preserved and the source's read still yields the old value;
 * the remaining goal, `[&c] * (i + 1) = r1 + r2`, distributes into `[&c]*i + [&c] = r1 + r2`, which follows from `[&c]*i = r1` and `[&c] = r2`.
 
-The two branch conditions agree because `i = r0`, so the programs stay in lockstep.
+The source then tests at S1 and the target tests at the bottom of T1. Their conditions agree because `i = r0` and memory is equal: both return to the related body entries, or both reach the related exits.
 
 **Checking the exit.** The failing test sends the source to S3 and the target to T2; both return the same value because `i = r0`, and the memory states are equal, so the returns are the same.
 

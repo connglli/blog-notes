@@ -1,7 +1,10 @@
 # Refinement E-Graphs
 
+**Summary by:** DeepSeek V4.1 Flash and GPT 6 Astra
+
 **Author:**
-- Philip Zucker<br/>
+
+* Philip Zucker<br/>
 
 **Source:** blog "Hey There Buddo!" 2026-10-04
 
@@ -15,7 +18,7 @@ A refinement e-graph adds an inequality (`<=`) relation beside the native equali
 
 ## Basic idea
 
-An ordinary e-graph [1] is a union-find plus a hash cons. Its central invariant is congruence [2]: `a = b => f(a) = f(b)` for every function symbol. The blog observes that many compiler rewrites are instead one-way refinements [3], from an abstract specification to a more determined implementation. A refinement e-graph adds `<=` beside `=`, where `t <= s` means that every behavior of `t` is a behavior of `s`, so `t` is the more refined term; a refinement rewrite replaces a term by a refinement of it, and a cycle `a <= b <= a` collapses to equality. The central difference from `=` is that general `<=` is not a congruence: it passes through a function only where the function is monotone in that argument, so each function symbol carries a variance signature [5] (`+`, `-`, or unknown). Where the variance is `+`, `<=` satisfies the analogue of congruence: `a <= b => f(a) <= f(b)`; a preorder compatible with every operation is called a precongruence, and this system has that compatibility only for the monotone declarations. The implementation is an inequality union-find [4] plus a hash cons, with refinement closure [6], refinement e-matching [7], and refinement extraction [9], all keyed by modes [8]; the blog gives a Python toy and a Rust prototype [12].
+An ordinary e-graph [1] records equalities and maintains congruence [2], so equal inputs give equal applications of a function. Many compiler rewrites are one-way refinements [3], which remove permitted behaviors instead of preserving exactly the same set. A refinement e-graph adds an inequality union-find [4] for `t <= s`, meaning that t refines s, and collapses cycles `a <= b <= a` to equality. Each function carries a variance signature [5] saying whether refinement is preserved, reversed, or unavailable in each argument. Refinement closure [6], e-matching [7], and extraction [9] propagate these directions using modes [8]; the blog presents Python and Rust prototypes [12].
 
 ## Illustrative example: constant folding through an unspecified value
 
@@ -44,7 +47,7 @@ Consider the expression `3 + ?`, where `?` stands for an unspecified integer. A 
 
 **[2] Congruence.** A relation `R` is compatible with a set of function symbols when `a R b` implies `f(..., a, ...) R f(..., b, ...)` for every symbol and argument position. A congruence is an equivalence relation with this property, and a precongruence is a preorder with it. Equality is a congruence for every function: applying a function to equal inputs gives equal outputs. Refinement `<=` is not a congruence in general. It is preserved only by functions monotone in the argument, reversed by anti-monotone functions, and undetermined for unknown ones; the variance signature records which case holds, and `<=` is a precongruence only for the symbols and arguments declared monotone. For example, set difference `A \ B` is monotone in `A` and anti-monotone in `B`. Under a semantics that lifts every constructor pointwise over sets of behaviors, every constructor is monotone, but the e-graph does not know the intended semantics, so the variance is declared.
 
-**[3] Refinement.** A preorder `<=` on terms, read `t <= s` as "t refines s". The blog's semantics is behavior containment: a term denotes a set of possible behaviors, and `t <= s` holds when every behavior of `t` is also a behavior of `s`. Refinement removes possible behaviors, so the more refined term is the more defined and more deterministic one. The relation is reflexive and transitive, and it is antisymmetric on classes: if `a <= b` and `b <= a` then `a` and `b` are equal. This containment order has the same shape as the refinement relation used to justify compiler transformations, where the transformed program may have fewer behaviors than the source. The blog's model is total: it has no undefined-behavior element and no separate `undef` or `poison` value.
+**[3] Refinement.** A preorder `<=` on terms, read `t <= s` as "t refines s". In the blog's Boolean don't-care example, refinement is pointwise containment of sets of possible outputs; our integer example uses the same order: a term denotes a set of possible behaviors, and `t <= s` holds when every behavior of `t` is also a behavior of `s`. Refinement removes possible behaviors, so the more refined term is the more defined and more deterministic one. The relation is reflexive and transitive, and it is antisymmetric on classes: if `a <= b` and `b <= a` then `a` and `b` are equal. This containment order has the same shape as the refinement relation used to justify compiler transformations, where the transformed program may have fewer behaviors than the source. This example is not a formal model of LLVM undefined behavior, `undef`, or `poison`; the data structure itself can also represent other declared orders.
 
 **[4] Inequality union-find.** The extension of a union-find that tracks `<=` beside `=`. The blog's interface:
 
@@ -63,9 +66,9 @@ Equality still uses `union`, `find`, and `is_eq`. Each class stores an upper set
 
 **[7] Refinement e-matching.** Matching a pattern against the e-graph while allowing `<=` steps. The problem is a constraint such as `?p <= t` or `t <= ?p`. Each argument of a function application inherits a constraint whose direction follows the argument's variance, so an anti-monotone argument flips the direction. The matcher may walk `<=` edges between classes while searching, and it can flatten a pattern into a chain in which every argument position is linked by an explicit `<=` with the direction set by variance.
 
-**[8] Mode.** A tag that records the relation currently being solved: equality (`EQ`), below (`LE`), or above (`GE`). Matching and extraction both use modes. Descending into a function argument transforms the mode: a monotone argument keeps it, an anti-monotone argument flips it, and an unknown argument forces equality.
+**[8] Mode.** A tag that records the relation currently being solved. In the Python toy's `expand_eclass(a, mode)`, `EQ` stays in a's class, `LE` visits classes x with `a <= x`, and `GE` visits classes x with `x <= a`. Thus extracting a refinement of a uses `GE` in that interface. Matching and extraction both use modes. Descending into a function argument transforms the mode: a monotone argument keeps it, an anti-monotone argument flips it, and an unknown argument forces equality.
 
-**[9] Refinement extraction.** Choosing a concrete term for a goal class, as in ordinary extraction, but the goal may be `?extract <= t` or `?extract >= t` instead of `?extract = t`. The extractor walks the classes related to the goal in the given mode, extracts each argument in the mode induced by the argument's variance, and keeps the best term according to a cost. The blog suggests preferring the most refined term and breaking ties by size; its toy implementation scores candidates by term size.
+**[9] Refinement extraction.** Choosing a concrete term for a goal class, as in ordinary extraction, but the goal may be `?extract <= t` or `?extract >= t` instead of `?extract = t`. The extractor walks the classes related to the goal in the given mode, extracts each argument in the mode induced by the argument's variance, and keeps the best term according to a cost. The blog suggests preferring the most refined term and breaking ties by size; its toy implementation scores candidates by term size, but the post does not establish global optimality for that recursive, cycle-pruning extractor.
 
 **[10] Don't care.** A condition whose output value does not matter because the input pattern cannot occur. Logic minimization, for example with Karnaugh maps, assigns don't-care outputs 0 or 1 to shrink the circuit. The unspecified `?` in the example is the same kind of freedom: the optimizer may choose any permitted value, here `0`.
 
