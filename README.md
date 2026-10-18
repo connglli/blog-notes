@@ -1,8 +1,10 @@
-# Notes ✍️
+# Blogs and Notes
 
-This is a collection of my own notes ✍️ (goto any Markdown or [Issues](https://github.com/connglli/blog-notes/issues)). Opinions are also my own 😆. Or check out [my website](https://connglli.github.io).
+> [!NOTE]
+> 
+> For blogs newer than 2026/10/01, I'll make each of them a Markdown file. Old blogs stay in Issues.
 
-Note: For new blogs (newer than 2026/10/01), I'll make each of them a Markdown file. Old blogs stay in Issues.
+This is a collection of my own blogs and notes (goto any Markdown or [Issues](https://github.com/connglli/blog-notes/issues)). Opinions are also my own. Or check out [my website](https://connglli.github.io).
 
 ### 🤖 Agents
 
@@ -11,11 +13,12 @@ This repo is now assisted by agents. I collect papers, blogs, projects, etc. tha
 + the basic idea,
 + an illustrative example,
 + and the concepts and terms needed to follow it.
+
 The format the agents write against lives in `AGENTS.md`.
 
 ### 🏡 Topics
 
-Topics are various, but,
+Topics are various:
 + `programming languages`, `compilers`, and `virtual machines`,
 + `ai agents`, `reasoning`, and language models,
 + `android` and `aosp`,
