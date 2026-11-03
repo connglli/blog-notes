@@ -4,7 +4,9 @@
 
 This directory holds short, self-contained summaries of papers and blog posts. One markdown file per work, named after the work.
 
-Use `TEMPLATE.md` for every summary. It defines the required metadata and section order; the rules below define the content and quality requirements. `paper.md` is a reading list, not a single-work summary.
+Keep `README.md` focused on what human readers can find in the repository. Put agent instructions, formatting rules, and validation commands in this file.
+
+Use `TEMPLATE.md` for every summary, including award-paper summaries under `mip_awardees/`. It defines the required metadata and section order; the rules below define the content and quality requirements. The checker exempts `AGENTS.md`, `README.md`, and `TEMPLATE.md` from summary structure, but not other Markdown filenames.
 
 ## Before writing
 
@@ -68,9 +70,11 @@ This rule applies to summaries, not repository instructions or the README. The s
 
 ## Format checks
 
+Format checks require Python 3.10+ and Git.
+
 Run `python3 scripts/check_summaries.py` to check only Markdown files added, modified, copied, or renamed in the staged changes. `--staged` is true by default. The checker reads their index contents and the index version of `TEMPLATE.md`; unchanged files, staged deletions, unstaged changes, and untracked drafts are excluded. Stage the template when introducing or changing the format. Use `--no-staged` only when explicitly requesting a working-tree check, including untracked drafts. These checks validate structure, metadata, links, and concept references; they do not establish technical accuracy or replace the source review and slop checklist.
 
-Enable the repository's pre-commit hook with `git config --local core.hooksPath .githooks`. The hook runs the staged check, so unstaged fixes cannot hide invalid staged content. Run checker regression tests with `python3 -m unittest discover -s scripts -p 'test_*.py'`.
+Enable the repository's pre-commit hook once per clone with `git config --local core.hooksPath .githooks`. The hook runs the staged check for root-level Markdown and Markdown under `mip_awardees/`, so unstaged fixes cannot hide invalid staged content. Run checker regression tests with `python3 -m unittest discover -s scripts -p 'test_*.py'`.
 
 ## The slop checklist
 

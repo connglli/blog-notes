@@ -192,6 +192,33 @@ class StagedTests(unittest.TestCase):
         errors, _ = check_repository(self.root, staged=True)
         self.assertTrue(any("bare publication URL" in error for error in errors))
 
+    def test_mip_awardees_checks_only_changed_index_contents(self):
+        self.write("mip_awardees/unchanged.md", "invalid committed summary\n")
+        self.run_git("add", "mip_awardees/unchanged.md")
+        self.commit_fixture()
+        self.write("mip_awardees/new summary.md", VALID)
+        self.run_git("add", "mip_awardees/new summary.md")
+        self.write("mip_awardees/new summary.md", "invalid working copy\n")
+        self.write("mip_awardees/untracked.md", "invalid draft\n")
+        self.assertEqual(check_repository(self.root), ([], 1))
+        self.run_git("add", "mip_awardees/new summary.md")
+        errors, count = check_repository(self.root)
+        self.assertEqual(count, 1)
+        self.assertTrue(any("mip_awardees/new summary.md" in error for error in errors))
+
+    def test_mip_awardees_readme_is_documentation_but_still_checks_pdf_links(self):
+        self.write("mip_awardees/README.md", "# Award summaries\n")
+        self.run_git("add", "mip_awardees/README.md")
+        self.assertEqual(check_repository(self.root), ([], 1))
+        self.write("mip_awardees/README.md", "[Download](https://example.org/work.pdf)\n")
+        self.run_git("add", "mip_awardees/README.md")
+        errors, _ = check_repository(self.root)
+        self.assertTrue(any("mip_awardees/README.md" in error and "PDF links" in error for error in errors))
+
+    def test_explicit_working_tree_check_includes_mip_awardees(self):
+        self.write("mip_awardees/draft.md", VALID)
+        self.assertEqual(check_repository(self.root, staged=False), ([], 2))
+
     def test_staged_rename_and_deletion(self):
         self.commit_fixture()
         self.run_git("mv", "example.md", "renamed summary.md")
@@ -200,9 +227,16 @@ class StagedTests(unittest.TestCase):
         self.run_git("rm", "--cached", "renamed summary.md")
         self.assertEqual(check_repository(self.root, staged=True), ([], 0))
 
-    def test_non_summary_exemptions_still_forbid_pdf_links(self):
+    def test_paper_filename_has_no_special_exemption(self):
         self.write("paper.md", "# Reading list\n\nA bibliography, not a summary.\n")
         self.run_git("add", "paper.md")
+        errors, count = check_repository(self.root)
+        self.assertEqual(count, 2)
+        self.assertTrue(any("paper.md: sections" in error for error in errors))
+
+    def test_non_summary_exemptions_still_forbid_pdf_links(self):
+        self.write("README.md", "# Project\n\nRepository documentation.\n")
+        self.run_git("add", "README.md")
         self.assertEqual(check_repository(self.root, staged=True), ([], 1))
         self.write("README.md", "# Project\n\n[Download](https://example.org/work.pdf)\n")
         self.run_git("add", "README.md")

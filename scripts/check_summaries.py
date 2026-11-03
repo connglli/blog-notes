@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Check summary structure against TEMPLATE.md, without third-party dependencies.
 
-By default, inspect only root-level Markdown added, modified, copied, or renamed
-in the staged changes, using index contents and the index version of TEMPLATE.md.
+By default, inspect only Markdown at the root or under mip_awardees/ that is added,
+modified, copied, or renamed in the staged changes, using index contents and
+the index version of TEMPLATE.md.
 --no-staged explicitly checks the working tree, including untracked drafts.
 Technical accuracy and prose quality still require human/source review.
 """
@@ -203,10 +204,12 @@ def check_repository(root: Path, staged: bool = True) -> tuple[list[str], int]:
             return git(root, "show", ":" + path).decode("utf-8")
     else:
         paths = [p.name for p in root.glob("*.md")]
+        paths += [p.relative_to(root).as_posix() for p in (root / "mip_awardees").rglob("*.md")]
         def read(path: str) -> str:
             return (root / path).read_text(encoding="utf-8")
-    paths = sorted({path for path in paths
-                    if PurePosixPath(path).parent == PurePosixPath(".") and path.endswith(".md")})
+    paths = sorted({path for path in paths if path.endswith(".md") and
+                    (PurePosixPath(path).parent == PurePosixPath(".") or
+                     PurePosixPath(path).parts[0] == "mip_awardees")})
     if not paths:
         return [], 0
     try:
@@ -218,7 +221,7 @@ def check_repository(root: Path, staged: bool = True) -> tuple[list[str], int]:
     count = 0
     for path in paths:
         text = read(path)
-        if path in NON_SUMMARIES:
+        if PurePosixPath(path).name in NON_SUMMARIES:
             issues = pdf_errors(text)
         else:
             count += 1
