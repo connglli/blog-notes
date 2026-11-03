@@ -2,13 +2,13 @@
 
 > [!NOTE]
 > 
-> For blogs newer than 2026/10/01, I'll make each of them a Markdown file. Old blogs stay in Issues.
+> For blogs newer than 2026/10/01, I make each of them a Markdown file. Old blogs stay in Issues.
 
 This is a collection of my own blogs and notes (goto any Markdown or [Issues](https://github.com/connglli/blog-notes/issues)). Opinions are also my own. Or check out [my website](https://connglli.github.io).
 
 ### 📜 Summaries
 
-I use agents to summarize papers, blog posts, and projects that interest me. Each summary is a self-contained Markdown file covering the key insight, basic idea, an illustrative example, and the concepts needed to follow it.
+Since 2026/10/01, I started to use agents to summarize papers, blog posts, and projects that interest me. Each summary is a self-contained Markdown file covering the key insight, basic idea, an illustrative example, and the concepts needed to follow it.
 
 [mip_awardees/](mip_awardees/README.md) contains summaries of SIGPLAN and SIGOPS influential-paper award winners. *They were recently summarized in a batch but were not yet proof read.*
 
@@ -32,4 +32,5 @@ You'd better know before reading them,
 
 ### 🤝 Welcome
 
-Last but not least, I'm learning as you are. So discussions are very much welcome. Let me know if you have any comments, suggestions, questions, or even **corrections**. Please directly make comments under the issues that you are interested.
+Last but not least, I'm learning as you are. So discussions are very much welcome. Let me know if you have any comments, suggestions, questions, or even **corrections**.
+
